@@ -11,14 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsToMany(models.patients, {through: 'symptoms_by_patients'});
     }
   };
   symptoms.init({
-    id: DataTypes.INTEGER,
+    id: {type: DataTypes.INTEGER, primaryKey:true , allowNull: false},
     name: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'symptoms',
+    paranoid:true
   });
   return symptoms;
 };

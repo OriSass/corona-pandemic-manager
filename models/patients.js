@@ -11,10 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.cities, {foreignKey: 'cityId'});
+      this.belongsTo(models.hospitals, {foreignKey: 'hospitalId'});
+      this.hasMany(models.covidTests, {foreignKey: 'patientId'});
+      this.belongsToMany(models.symptoms, {through: 'symptoms_by_patients'});
     }
   };
   patients.init({
-    id: DataTypes.INTEGER,
+    id: {type: DataTypes.INTEGER, primaryKey:true },
     dateOfBirth: DataTypes.DATE,
     name: DataTypes.STRING,
     status: DataTypes.STRING,
@@ -23,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'patients',
+    paranoid:true
   });
   return patients;
 };

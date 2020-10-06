@@ -14,12 +14,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   symptomsByPatients.init({
-    id: DataTypes.INTEGER,
+    id: {type: DataTypes.INTEGER, primaryKey:true , allowNull: false},
     patientId: DataTypes.INTEGER,
     symptomId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'symptomsByPatients',
+    paranoid:true
   });
   return symptomsByPatients;
 };

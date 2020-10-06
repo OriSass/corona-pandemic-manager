@@ -11,15 +11,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.patients, {foreignKey: 'patientId'});
     }
   };
   covidTests.init({
-    id: DataTypes.INTEGER,
+    id: {type: DataTypes.INTEGER, primaryKey:true , allowNull:false},
     patientId: DataTypes.INTEGER,
     isSick: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'covidTests',
+    paranoid:true
   });
   return covidTests;
 };
