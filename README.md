@@ -7,21 +7,30 @@ this challenge will test your Back-End skills. you are required to use express.j
 
 ## Table Of Contents
 
+* [Getting Started](#Getting-Started)
 * [Tasks](#Tasks) 
 * [Rest API](#Rest-API)
 * [Database Requirements](#Database-Requirements)
 * [Rest API Requirement](#Rest-API-Requirement)
 
+## Getting Started
+### Some steps to begin the challenge:
+1. Run - npm install in the terminal.(To install all the dependencies in the package.json).
+2. Run sequelize init.
+3. Add a .env file and store all your configuration data that you will add in the next steps to the config  file for the connection to your dataBase, for example, host, password, user and data-base name(you can add more if you fill so). env file is actually a simple configuration text file that is used to define some variables you want to pass into your application's environment. (Good resource about [Environment Variables](#https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786))
+4. Change the config file that is inside your config folder to a javaScript file, that is the way to use the configuration data that is inside the .env file.
+Remember to add "require('dotenv').config();" at the top of the config.js file to actually make the data inside the env file readable to the config.js file, and of course don't forget to module.export the config.js file that supposed to be a nested Object.
+5. After you defined the config file to js and also changed the reference inside, it suppose to run.
+6. Run the client- it will not work until you finish the functionality in the server.
+
 ## Tasks
-- run sequelize init, define the config file as js and also change the its reference in index file so it will run.
-- run the client- it will not work till you finish the functionality in the server. 
 - Use underscore in DB in all the models tables. In node it should perform in camelCase. Hint: ("define": {"underscored": true})
-- Create the right migrations and models based on the requirements we give (you can run the seed files with npx sequelize db:seed:all to see that the tables are right)
+- Create the right migrations and models based on the requirements we give.
+- After you created all your models and tables you can copy the build seeders to your seeders, and run the seeders command, that will run the seeders file that you have in your backend (command: npx sequlize-cli db:seed:all)
+- Use the Sequelize Paranoid (in all tables), make sure that all models have "deletedAt" column.
 - Create an express server that will analyze details from the data base and display it to the client.
 - Build [Rest-API](#Rest-API) for each model in the data base.
 - Pass all the tests.
-- Use the Sequelize Paranoid (in all tables), make sure that all models have "deletedAt" column.
-- After you created all your models and tables you can copy the build seeders to your seeders, and run the seeders command, that will run the seeders file that you have in your backend (command: npx sequlize-cli db:seed:all)
 
 ## Database Requirements(the test checks that)
 ### Database
