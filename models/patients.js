@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class patients extends Model {
+  class Patients extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,13 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.cities, {foreignKey: 'cityId'});
-      this.belongsTo(models.hospitals, {foreignKey: 'hospitalId'});
-      this.hasMany(models.covidTests, {foreignKey: 'patientId'});
-      this.belongsToMany(models.symptoms, {through: 'symptoms_by_patients'});
+      this.belongsTo(models.Cities, {foreignKey: 'cityId'});
+      this.belongsTo(models.Hospitals, {foreignKey: 'hospitalId'});
+      this.hasMany(models.CovidTests, {foreignKey: 'patientId'});
+      this.belongsToMany(models.Symptoms, {through: 'symptoms_by_patients'});
     }
+
   };
-  patients.init({
+  Patients.init({
     id: {type: DataTypes.INTEGER, primaryKey:true },
     dateOfBirth: DataTypes.DATE,
     name: DataTypes.STRING,
@@ -26,8 +27,8 @@ module.exports = (sequelize, DataTypes) => {
     hospitalId: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'patients',
+    modelName: 'Patients',
     paranoid:true
   });
-  return patients;
+  return Patients;
 };

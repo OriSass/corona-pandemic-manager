@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { response } = require('../../app');
 const router = Router();
-const { patients, cities, hospitals, symptoms, covidTests } = require('../../models');
+const { Patients, Cities, Hospitals, Symptoms, CovidTests, SymptomsByPatients } = require('../../models');
 
 // configurated error: minimum code duplication
 // problem: no access to response
@@ -16,11 +16,11 @@ const { patients, cities, hospitals, symptoms, covidTests } = require('../../mod
 
 router.get('/', async(request, response) => {
     try {
-        const allPatients = await patients.findAll({
-            include: [{ model: cities, attributes: ['name', 'population'] },
-                      { model: hospitals, attributes: ['name'] },
-                      { model: symptoms, attributes: ['name'] },
-                      { model: covidTests, attributes: ['isSick']}]
+        const allPatients = await Patients.findAll({
+            include: [{ model: Cities, attributes: ['name', 'population'] },
+                      { model: Hospitals, attributes: ['name'] },
+                      { model: SymptomsByPatients, attributes: ['patientId','symptomId'] },
+                      { model: CovidTests, attributes: ['isSick']}]
         });
         response.json(allPatients);    
         
@@ -31,12 +31,12 @@ router.get('/', async(request, response) => {
 router.get('/byId/:patientId', async(request, response) => {
     try {
         const patientId = request.params.patientId; 
-        const patient = await patients.findOne({
+        const patient = await Patients.findOne({
             where: { id: patientId },
-            include: [{ model: cities, attributes: ['name', 'population'] },
-                      { model: hospitals, attributes: ['name'] },
-                      { model: symptoms, attributes: ['name'] },
-                      { model: covidTests, attributes: ['isSick']}]
+            include: [{ model: Cities, attributes: ['name', 'population'] },
+                      { model: Hospitals, attributes: ['name'] },
+                      { model: Symptoms, attributes: ['name'] },
+                      { model: CovidTests, attributes: ['isSick']}]
         });
         response.json(patient);
         
@@ -47,12 +47,12 @@ router.get('/byId/:patientId', async(request, response) => {
 router.get('/byName/:patientName', async(request, response) => {
     try {
         const patientName = request.params.patientName;
-        const patient = await patients.findOne({
+        const patient = await Patients.findOne({
             where: { name: patientName },
-            include: [{ model: cities, attributes: ['name', 'population'] },
-                      { model: hospitals, attributes: ['name'] },
-                      { model: symptoms, attributes: ['name'] },
-                      { model: covidTests, attributes: ['isSick']}]
+            include: [{ model: Cities, attributes: ['name', 'population'] },
+                      { model: Hospitals, attributes: ['name'] },
+                      { model: Symptoms, attributes: ['name'] },
+                      { model: CovidTests, attributes: ['isSick']}]
         });
         response.json(patient);   
     } catch (error) {
@@ -60,17 +60,17 @@ router.get('/byName/:patientName', async(request, response) => {
     }
 });
 router.get('/positive', async(request, response) => {
-    const positivePatients = await covidTests.findAll({
+    const positivePatients = await CovidTests.findAll({
         attributes: ["patientId"],
         where: { isSick: true },
         include: [ 
             {
-                model: patients,
+                model: Patients,
                 include: [
-                  { model: cities, attributes: ['name', 'population'] },
-                  { model: hospitals, attributes: ['name'] },
-                  { model: symptoms, attributes: ['name'] },
-                  { model: covidTests, attributes: ['isSick']}
+                  { model: Cities, attributes: ['name', 'population'] },
+                  { model: Hospitals, attributes: ['name'] },
+                  { model: Symptoms, attributes: ['name'] },
+                  { model: CovidTests, attributes: ['isSick']}
                 ]
             }]
     });
@@ -79,7 +79,7 @@ router.get('/positive', async(request, response) => {
 
 router.post('/', async(request, response) => {
     try {
-        await patients.create(request.body);
+        await Patients.create(request.body);
         response.status(201).send('ADDED PATIENT');
     } catch (error) {
         response.status(400).send(error.message);
@@ -88,7 +88,7 @@ router.post('/', async(request, response) => {
 router.delete('/:patientId', async(request, response) => {
     try {
         const patientId = request.params.patientId
-        await patients.destroy({
+        await Patients.destroy({
             where: {id:patientId}
         });
         response.status(200).send('DELETED PATIENT');
