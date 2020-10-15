@@ -19,8 +19,9 @@ router.get('/', async(request, response) => {
         const allPatients = await Patients.findAll({
             include: [{ model: Cities, attributes: ['name', 'population'] },
                       { model: Hospitals, attributes: ['name'] },
-                      { model: SymptomsByPatients, attributes: ['patientId','symptomId'] },
-                      { model: CovidTests, attributes: ['isSick']}]
+                      { model: CovidTests, attributes: ['isSick']},
+                      { model: SymptomsByPatients, attributes: ['patientId','symptomId'],
+                            include: [{ model: Symptoms, attributes: ['name']}] }]
         });
         response.json(allPatients);    
         
@@ -35,9 +36,12 @@ router.get('/byId/:patientId', async(request, response) => {
             where: { id: patientId },
             include: [{ model: Cities, attributes: ['name', 'population'] },
                       { model: Hospitals, attributes: ['name'] },
-                      { model: Symptoms, attributes: ['name'] },
-                      { model: CovidTests, attributes: ['isSick']}]
-        });
+                      { model: CovidTests, attributes: ['isSick']}
+                      ,
+                      { model: SymptomsByPatients, 
+                            include: [{model: Symptoms}]
+                        },
+            ]});
         response.json(patient);
         
     } catch (error) {
@@ -51,8 +55,11 @@ router.get('/byName/:patientName', async(request, response) => {
             where: { name: patientName },
             include: [{ model: Cities, attributes: ['name', 'population'] },
                       { model: Hospitals, attributes: ['name'] },
-                      { model: Symptoms, attributes: ['name'] },
-                      { model: CovidTests, attributes: ['isSick']}]
+                      { model: CovidTests, attributes: ['isSick']},
+                      { 
+                          model: SymptomsByPatients,
+                            include: [{ model: Symptoms, attributes: ['name']}]
+                        }]
         });
         response.json(patient);   
     } catch (error) {
@@ -66,11 +73,12 @@ router.get('/positive', async(request, response) => {
         include: [ 
             {
                 model: Patients,
+                attributes: ['name'],
                 include: [
                   { model: Cities, attributes: ['name', 'population'] },
                   { model: Hospitals, attributes: ['name'] },
-                  { model: Symptoms, attributes: ['name'] },
-                  { model: CovidTests, attributes: ['isSick']}
+                  { model: SymptomsByPatients, 
+                    include: [{ model: Symptoms, attributes: ['name']}] },
                 ]
             }]
     });
@@ -79,8 +87,17 @@ router.get('/positive', async(request, response) => {
 
 router.post('/', async(request, response) => {
     try {
+        ///console.log(request.body);
+        const name = request.body.name;
         await Patients.create(request.body);
-        response.status(201).send('ADDED PATIENT');
+        const p = await Patients.findOne({where: {name: name} });
+        const id = p.id;
+        await CovidTests.create({id: 999, patientId: id});
+        const newPatient = await Patients.findOne({
+            where: {id},
+            include: [{model: CovidTests}]});
+        console.log(newPatient);
+        response.json(newPatient);
     } catch (error) {
         response.status(400).send(error.message);
     }

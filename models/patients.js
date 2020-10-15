@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Cities, {foreignKey: 'cityId'});
       this.belongsTo(models.Hospitals, {foreignKey: 'hospitalId'});
       this.hasMany(models.CovidTests, {foreignKey: 'patientId'});
-      this.belongsToMany(models.Symptoms, {through: 'symptoms_by_patients'});
+      this.hasMany(models.SymptomsByPatients, {foreignKey: 'patientId'});
     }
 
   };
