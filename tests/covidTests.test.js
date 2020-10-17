@@ -62,6 +62,7 @@ describe("Covid test api tests", () => {
 
 it("Count all the covid tests by results", async () => {
 const { body : positiveTests} = await request(app).get("/api/v1/covidtests/test-results/1").expect(200);
+console.log(positiveTests);
 expect(positiveTests.count).toBe(3);
 const { body : negativeTests}  = await request(app).get("/api/v1/covidtests/test-results/0").expect(200);
 expect(negativeTests.count).toBe(2);
@@ -69,6 +70,7 @@ expect(negativeTests.count).toBe(2);
 
 it("Can get all the tests by patient id", async () => {
   const { body } = await request(app).get("/api/v1/covidtests/1").expect(200);
+  console.log(body);
   expect(body.id).toBe(1);
   expect(body.isSick).toBe(true);
 });
